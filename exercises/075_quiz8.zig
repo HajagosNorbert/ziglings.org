@@ -7,7 +7,9 @@
 // explanatory comments. And we're only going to change one part
 // of it.
 //
+const std = @import("std");
 const print = @import("std").debug.print;
+const mem = @import("std").mem;
 
 const TripError = error{ Unreachable, EatenByAGrue };
 
@@ -48,8 +50,29 @@ const Path = struct {
 // instead.
 //
 // Please fill in the body of this function!
-fn makePath(from: *Place, to: *Place, dist: u8) Path {
-
+//
+// goal:
+// makePath(a -> (b,2))
+// current: makePath(a, "b,2")
+fn makePath(from: *Place, comptime toPattern: []u8) Path {
+    const splt = comptime mem.splitScalar(u8, toPattern, ',');
+    const toChar = splt[0];
+    const to = switch (toChar) {
+        'a' => a,
+        'b' => b,
+        'c' => c,
+        'd' => d,
+        'e' => e,
+        'f' => f,
+        else => unreachable,
+    };
+    _ = splt[1];
+    const dist = std.fmt.parseInt(u8, &[_]u8{'3'}, 10) catch unreachable;
+    return Path{
+        .from = from,
+        .to = &to,
+        .dist = dist,
+    };
 }
 
 // Using our new function, these path definitions take up considerably less
