@@ -54,35 +54,41 @@ const Path = struct {
 // goal:
 // makePath(a -> (b,2))
 // current: makePath(a, "b,2")
-fn makePath(from: *Place, comptime toPattern: []u8) Path {
-    const splt = comptime mem.splitScalar(u8, toPattern, ',');
-    const toChar = splt[0];
+fn makePath(comptime from: *Place, comptime toPattern: *const [3]u8) Path {
+    // var splt = comptime mem.splitScalar(u8, toPattern, ',');
+    // const toChar = splt.first();
+    const toChar = toPattern[0];
     const to = switch (toChar) {
-        'a' => a,
-        'b' => b,
-        'c' => c,
-        'd' => d,
-        'e' => e,
-        'f' => f,
+        'a' => &a,
+        'b' => &b,
+        'c' => &c,
+        'd' => &d,
+        'e' => &e,
+        'f' => &f,
         else => unreachable,
     };
-    _ = splt[1];
-    const dist = std.fmt.parseInt(u8, &[_]u8{'3'}, 10) catch unreachable;
+    const dist = toPattern[2] - '0';
     return Path{
         .from = from,
-        .to = &to,
+        .to = to,
         .dist = dist,
     };
 }
 
 // Using our new function, these path definitions take up considerably less
 // space in our program now!
-const a_paths = [_]Path{makePath(&a, &b, 2)};
-const b_paths = [_]Path{ makePath(&b, &a, 2), makePath(&b, &d, 1) };
-const c_paths = [_]Path{ makePath(&c, &d, 3), makePath(&c, &e, 2) };
-const d_paths = [_]Path{ makePath(&d, &b, 1), makePath(&d, &c, 3), makePath(&d, &f, 7) };
-const e_paths = [_]Path{ makePath(&e, &c, 2), makePath(&e, &f, 1) };
-const f_paths = [_]Path{makePath(&f, &d, 7)};
+const a_paths = [_]Path{makePath(&a, "b,2")};
+const b_paths = [_]Path{ makePath(&b, "a,2"), makePath(&b, "d,1") };
+const c_paths = [_]Path{ makePath(&c, "d,3"), makePath(&c, "e,2") };
+const d_paths = [_]Path{ makePath(&d, "b,1"), makePath(&d, "c,3"), makePath(&d, "f,7") };
+const e_paths = [_]Path{ makePath(&e, "c,2"), makePath(&e, "f,1") };
+const f_paths = [_]Path{makePath(&f, "d,7")};
+
+// const b_paths = [_]Path{ makePath(&b, &a, 2), makePath(&b, &d, 1) };
+// const c_paths = [_]Path{ makePath(&c, &d, 3), makePath(&c, &e, 2) };
+// const d_paths = [_]Path{ makePath(&d, &b, 1), makePath(&d, &c, 3), makePath(&d, &f, 7) };
+// const e_paths = [_]Path{ makePath(&e, &c, 2), makePath(&e, &f, 1) };
+// const f_paths = [_]Path{makePath(&f, &d, 7)};
 //
 // But is it more readable? That could be argued either way.
 //
