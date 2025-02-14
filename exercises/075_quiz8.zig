@@ -54,11 +54,10 @@ const Path = struct {
 // goal:
 // makePath(a -> (b,2))
 // current: makePath(a, "b,2")
-fn makePath(comptime from: *Place, comptime toPattern: *const [3]u8) Path {
-    // var splt = comptime mem.splitScalar(u8, toPattern, ',');
-    // const toChar = splt.first();
-    const toChar = toPattern[0];
-    const to = switch (toChar) {
+fn makePath(comptime from: *Place, comptime toPattern: []const u8) Path {
+    var splt = comptime mem.splitScalar(u8, toPattern, ',');
+    const toPlaceStr = splt.first();
+    const to = switch (toPlaceStr[0]) {
         'a' => &a,
         'b' => &b,
         'c' => &c,
@@ -67,7 +66,8 @@ fn makePath(comptime from: *Place, comptime toPattern: *const [3]u8) Path {
         'f' => &f,
         else => unreachable,
     };
-    const dist = toPattern[2] - '0';
+    const distStr = splt.next().?;
+    const dist = std.fmt.parseUnsigned(u8, distStr, 10) catch unreachable;
     return Path{
         .from = from,
         .to = to,
