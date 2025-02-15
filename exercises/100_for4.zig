@@ -36,10 +36,10 @@ const std = @import("std");
 const print = std.debug.print;
 
 pub fn main() void {
-    const hex_nums = [_]u8{ 0xb, 0x2a, 0x77 };
-    const dec_nums = [_]u8{ 11, 42, 119 };
+    const hex_nums: []const u8 = "abc";
+    const dec_nums: []const u8 = "abc";
 
-    for (hex_nums, ???) |hn, ???| {
+    for (hex_nums, dec_nums) |hn, dn| {
         if (hn != dn) {
             print("Uh oh! Found a mismatch: {d} vs {d}\n", .{ hn, dn });
             return;
